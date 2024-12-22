@@ -14,21 +14,28 @@
       align-items: center;
       height: 100vh;
       width: 100vw;
+      overflow: hidden; /* Prevents scrolling */
       position: relative;
-      overflow: hidden;
     }
-    body::before {
-      content: "";
+
+    /* Video background */
+    .video-background {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('./images/pexels-photo.jpg') no-repeat center center fixed;
-      background-size: cover;
-      filter: brightness(0.4);
       z-index: -2;
+      overflow: hidden;
     }
+
+    .video-background video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensures the video covers the entire viewport */
+      filter: grayscale(100%);
+    }
+
     body::after {
       content: "";
       position: absolute;
@@ -36,48 +43,53 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.7); /* Adds a dark overlay for better contrast */
       z-index: -1;
     }
+
     .header {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
+      top: 10px;
+      left: 10px;
       display: flex;
       align-items: center;
-      padding: 10px 20px;
-      background: rgba(0, 0, 0, 0);
       color: white;
       z-index: 2;
     }
+
     .header img {
       height: 40px;
       margin-right: 10px;
     }
+
     .header h1 {
-      font-size: 30px;
+      font-size: 24px;
       margin: 0;
     }
+
     .login-container {
+      position: relative;
       background: rgba(255, 255, 255, 0.9);
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      width: 300px;
+      width: 85%; /* Smaller width to show more background */
+      max-width: 400px; /* Prevent it from growing too large on desktops */
       text-align: center;
       z-index: 1;
-      margin-top: 80px;
     }
+
     .login-container h1 {
       margin-bottom: 20px;
       font-size: 24px;
       color: #000000;
     }
+
     .form-input {
       margin-bottom: 15px;
       width: 100%;
     }
+
     .form-input input {
       width: calc(100% - 20px);
       padding: 10px;
@@ -87,14 +99,17 @@
       background: #3a3a3a;
       color: #ffffff;
     }
+
     .form-input input::placeholder {
       color: #d4d4d4;
       opacity: 1;
     }
+
     .form-input input:focus {
       outline: none;
       border-color: #ffffff;
     }
+
     .login-button {
       width: 100%;
       padding: 10px;
@@ -106,9 +121,11 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
+
     .login-button:hover {
       background: #333333;
     }
+
     .remember-me {
       display: flex;
       align-items: center;
@@ -116,33 +133,46 @@
       margin-bottom: 15px;
       font-size: 14px;
     }
+
     .remember-me input {
       margin-right: 8px;
     }
+
     .forgot-password {
       margin-bottom: 20px;
       font-size: 14px;
     }
+
     .forgot-password a {
       color: #000000;
       text-decoration: underline;
     }
+
     @media (max-width: 600px) {
       .login-container {
         width: 90%;
         padding: 15px;
       }
       .header h1 {
-        font-size: 16px;
+        font-size: 18px;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Video background -->
+  <div class="video-background">
+    <video autoplay muted loop>
+      <source src="./images/background-video.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
   <header class="header">
     <img src="./images/chongo.png" alt="Chongo Logo">
     <h1>Chongo Finance</h1>
   </header>
+
   <div class="login-container">
     <h1>Login</h1>
     <form onsubmit="validateForm(event)">
@@ -163,6 +193,7 @@
     </form>
     <p>Don't have an account? <a href="#" style="color: #000000;">Sign Up</a></p>
   </div>
+
   <script>
     function validateForm(event) {
       event.preventDefault();
