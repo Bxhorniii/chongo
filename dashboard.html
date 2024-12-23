@@ -118,12 +118,13 @@
       display: flex;
       justify-content: space-between;
       gap: 20px;
-      flex-wrap: wrap; /* Ensures responsiveness */
+      flex-wrap: wrap;
     }
 
     .chart-container {
       flex: 1;
       max-width: 48%;
+      min-width: 300px;
       background: rgba(255, 255, 255, 0.9);
       padding: 20px;
       border-radius: 8px;
@@ -134,6 +135,7 @@
     .chart-container canvas {
       margin: 0 auto;
       display: block;
+      max-width: 100%;
     }
 
     .legend {
@@ -185,6 +187,12 @@
     @media (max-width: 600px) {
       .chart-row {
         flex-direction: column;
+        gap: 10px;
+      }
+
+      .chart-container {
+        max-width: 100%; /* Full width for smaller screens */
+        padding: 15px;
       }
     }
   </style>
