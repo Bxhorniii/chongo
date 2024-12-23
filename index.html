@@ -53,7 +53,9 @@
       left: 10px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       color: white;
+      width: 95%;
       z-index: 2;
     }
 
@@ -65,15 +67,15 @@
     .header h1 {
       font-size: 24px;
       margin: 0;
+      flex-grow: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .nav-buttons {
-      position: absolute;
-      top: 15px;
-      right: 20px;
       display: flex;
       gap: 10px;
-      z-index: 2;
     }
 
     .nav-buttons a {
@@ -115,25 +117,31 @@
       margin-top: 20px;
       padding: 10px 20px;
       font-size: 16px;
-      color: black; /* Change text color to black for contrast */
-      background: white; /* Change background to white */
+      color: black;
+      background: white;
       text-decoration: none;
       border-radius: 4px;
       transition: background 0.3s ease, color 0.3s ease;
     }
 
     .content-container .cta-button:hover {
-      background: #f0f0f0; /* Slightly darker shade for hover */
-      color: black; /* Keep text color consistent on hover */
+      background: #f0f0f0;
+      color: black;
     }
 
     @media (max-width: 600px) {
+      .header h1 {
+        font-size: 18px;
+        max-width: 60%;
+      }
+
       .content-container h1 {
         font-size: 28px;
       }
 
-      .content-container p {
-        font-size: 16px;
+      .nav-buttons a {
+        font-size: 12px;
+        padding: 8px 10px;
       }
     }
   </style>
@@ -150,16 +158,12 @@
   <!-- Header -->
   <header class="header">
     <img src="./images/chango.png" alt="Chango Logo">
-    <a href="./index.html" style="text-decoration: none; color: white;">
-      <h1>Chango Finance</h1>
-    </a>
+    <h1>Chango Finance</h1>
+    <div class="nav-buttons">
+      <a href="./login.html">Login</a>
+      <a href="./signup.html">Sign Up</a>
+    </div>
   </header>
-
-  <!-- Navigation buttons -->
-  <div class="nav-buttons">
-    <a href="./login.html">Login</a>
-    <a href="./signup.html">Sign Up</a>
-  </div>
 
   <!-- Content -->
   <div class="content-container">
