@@ -158,6 +158,9 @@
         <input type="text" name="fullname" placeholder="Full Name" required aria-label="Full Name">
       </div>
       <div class="form-input">
+        <input type="text" name="username" placeholder="Username" required aria-label="Username">
+      </div>
+      <div class="form-input">
         <input type="password" name="password" id="password" placeholder="Password" required aria-label="Password">
       </div>
       <div class="form-input">
@@ -165,16 +168,19 @@
       </div>
       <button type="submit" class="login-button">Sign Up</button>
     </form>
-    <p>Already have an account? <a href="./index.html" style="color: #000000;">Login</a></p>
+    <p>Already have an account? <a href="./login.html" style="color: #000000;">Login</a></p>
   </div>
 
   <script>
     function validateForm(event) {
       event.preventDefault();
+      const username = document.querySelector("input[name='username']").value;
       const password = document.querySelector("input[name='password']").value;
       const confirmPassword = document.querySelector("input[name='confirm-password']").value;
 
-      if (password !== confirmPassword) {
+      if (!username.trim()) {
+        alert("Please enter a valid username!");
+      } else if (password !== confirmPassword) {
         alert("Passwords do not match!");
       } else {
         alert("Account successfully created!");
