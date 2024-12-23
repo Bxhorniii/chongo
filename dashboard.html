@@ -114,6 +114,10 @@
       color: #000000;
     }
 
+    .chart-section {
+      text-align: center;
+    }
+
     .chart-section .chart-row {
       display: flex;
       justify-content: center;
@@ -129,8 +133,10 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      margin: 0 auto;
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     .chart-container canvas {
@@ -227,13 +233,13 @@
       <div class="chart-row">
         <!-- This Month's Spendings -->
         <div class="chart-container">
-          <h2 style="text-align: center;">This Month's Spendings</h2>
+          <h2>This Month's Spendings</h2>
           <canvas id="thisMonthChart"></canvas>
           <div class="legend" id="thisMonthLegend"></div>
         </div>
         <!-- Last Month's Spendings -->
         <div class="chart-container">
-          <h2 style="text-align: center;">Last Month's Spendings</h2>
+          <h2>Last Month's Spendings</h2>
           <canvas id="lastMonthChart"></canvas>
           <div class="legend" id="lastMonthLegend"></div>
         </div>
@@ -267,7 +273,7 @@
       <div class="progress-container">
         <div class="progress-bar" style="width: 40%;"></div>
       </div>
-      <p style="text-align: center; color: #000000;">40% of your goal achieved</p>
+      <p style="color: #000000;">40% of your goal achieved</p>
     </div>
 
     <!-- Recent Transactions -->
