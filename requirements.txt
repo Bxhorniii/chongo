@@ -1,1 +1,8 @@
-
+flask             # For building the web application
+flask-session     # For managing user sessions in Flask
+bcrypt            # For password hashing
+gunicorn          # For deploying the app on Render or other production environments
+jinja2            # For rendering HTML templates
+click             # Dependency of Flask
+itsdangerous      # Dependency of Flask
+Werkzeug          # Dependency of Flask
