@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, session
-from backend.auth import Auth
+from auth import Auth
 
 # Initialize Flask app and configure template/static folders
 app = Flask(
