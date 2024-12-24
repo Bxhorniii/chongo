@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up Page</title>
+  <style>
+    /* Your existing CSS styles remain unchanged */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .video-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .video-background video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: grayscale(100%);
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
+    }
+
+    .header {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      color: white;
+      z-index: 2;
+    }
+
+    .header img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    .header a {
+      text-decoration: none;
+      color: white;
+    }
+
+    .login-container {
+      position: relative;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      width: 85%;
+      max-width: 400px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .login-container h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #000000;
+    }
+
+    .form-input {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .form-input input {
+      width: calc(100% - 20px);
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ffffff;
+      border-radius: 4px;
+      background: #3a3a3a;
+      color: #ffffff;
+    }
+
+    .form-input input::placeholder {
+      color: #d4d4d4;
+      opacity: 1;
+    }
+
+    .form-input input:focus {
+      outline: none;
+      border-color: #ffffff;
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background: #000000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .login-button:hover {
+      background: #333333;
+    }
+
+    @media (max-width: 600px) {
+      .login-container {
+        width: 90%;
+        padding: 15px;
+      }
+
+      .header h1 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Video background -->
+  <div class="video-background">
+    <video autoplay muted loop playsinline>
+      <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <header class="header">
+    <img src="{{ url_for('static', filename='chango.png') }}" alt="Chango Logo">
+    <a href="./index.html">
+      <h1>Chango Finance</h1>
+    </a>
+  </header>
+
+  <div class="login-container">
+    <h1>Sign Up</h1>
+    <form id="signup-form">
+      <div class="form-input">
+        <input type="text" name="fullname" placeholder="Full Name" required aria-label="Full Name">
+      </div>
+      <div class="form-input">
+        <input type="text" name="username" placeholder="Username" required aria-label="Username">
+      </div>
+      <div class="form-input">
+        <input type="password" name="password" id="password" placeholder="Password" required aria-label="Password">
+      </div>
+      <div class="form-input">
+        <input type="password" name="confirm-password" id="confirm-password" placeholder="Confirm Password" required aria-label="Confirm Password">
+      </div>
+      <button type="submit" class="login-button">Sign Up</button>
+    </form>
+    <p>Already have an account? <a href="./login" style="color: #000000;">Login</a></p>
+  </div>
+
+  <script>
+    document.getElementById("signup-form").addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const fullname = document.querySelector("input[name='fullname']").value.trim();
+      const username = document.querySelector("input[name='username']").value.trim();
+      const password = document.querySelector("input[name='password']").value.trim();
+      const confirmPassword = document.querySelector("input[name='confirm-password']").value.trim();
+
+      if (password !== confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      try {
+        const response = await fetch("/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: fullname, username, password }),
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          alert(result.message);
+          window.location.href = "./login.html"; // Redirect to login page
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
