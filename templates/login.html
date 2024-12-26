@@ -14,11 +14,10 @@
       align-items: center;
       height: 100vh;
       width: 100vw;
-      overflow: hidden; /* Prevents scrolling */
+      overflow: hidden;
       position: relative;
     }
 
-    /* Video background */
     .video-background {
       position: absolute;
       top: 0;
@@ -32,7 +31,7 @@
     .video-background video {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* Ensures the video covers the entire viewport */
+      object-fit: cover;
       filter: grayscale(100%);
     }
 
@@ -43,7 +42,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7); /* Adds a dark overlay for better contrast */
+      background: rgba(0, 0, 0, 0.7);
       z-index: -1;
     }
 
@@ -78,8 +77,8 @@
       padding: 20px;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      width: 85%; /* Smaller width to show more background */
-      max-width: 400px; /* Prevent it from growing too large on desktops */
+      width: 85%;
+      max-width: 400px;
       text-align: center;
       z-index: 1;
     }
@@ -107,7 +106,6 @@
 
     .form-input input::placeholder {
       color: #d4d4d4;
-      opacity: 1;
     }
 
     .form-input input:focus {
@@ -131,16 +129,28 @@
       background: #333333;
     }
 
-    .remember-me {
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      margin-bottom: 15px;
-      font-size: 14px;
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: none;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 300px;
+      text-align: center;
     }
 
-    .remember-me input {
-      margin-right: 8px;
+    .success {
+      background: #28a745;
+    }
+
+    .error {
+      background: #d65563;
     }
 
     @media (max-width: 600px) {
@@ -148,6 +158,7 @@
         width: 90%;
         padding: 15px;
       }
+
       .header h1 {
         font-size: 18px;
       }
@@ -155,7 +166,6 @@
   </style>
 </head>
 <body>
-  <!-- Video background -->
   <div class="video-background">
     <video autoplay muted loop playsinline>
       <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
@@ -165,7 +175,7 @@
 
   <header class="header">
     <img src="{{ url_for('static', filename='chango.png') }}" alt="Chango Logo">
-    <a href="./index.html">
+    <a href="{{ url_for('index') }}">
       <h1>Chango Finance</h1>
     </a>
   </header>
@@ -174,19 +184,17 @@
     <h1>Login</h1>
     <form id="login-form">
       <div class="form-input">
-        <input type="text" name="username" placeholder="Username" required aria-label="Username">
+        <input type="text" name="username" placeholder="Username" required>
       </div>
       <div class="form-input">
-        <input type="password" name="password" id="password" placeholder="Password" required aria-label="Password">
-      </div>
-      <div class="remember-me">
-        <input type="checkbox" id="remember-me" name="remember-me">
-        <label for="remember-me">Remember Me</label>
+        <input type="password" name="password" placeholder="Password" required>
       </div>
       <button type="submit" class="login-button">Login</button>
     </form>
-    <p>Don't have an account? <a href="{{ url_for('signup_page') }}" style="color: #000000;">Sign Up</a></p>
+    <p>Don't have an account? <a href="{{ url_for('signup_page') }}">Sign Up</a></p>
   </div>
+
+  <div id="notification" class="notification"></div>
 
   <script>
     document.getElementById("login-form").addEventListener("submit", async function (event) {
@@ -195,10 +203,7 @@
       const username = document.querySelector("input[name='username']").value.trim();
       const password = document.querySelector("input[name='password']").value.trim();
 
-      if (!username || !password) {
-        alert("Please fill out both fields!");
-        return;
-      }
+      const notification = document.getElementById("notification");
 
       try {
         const response = await fetch("/login", {
@@ -209,14 +214,28 @@
 
         const result = await response.json();
         if (result.success) {
-          alert(result.message);
-          window.location.href = "{{ url_for('dashboard') }}"; // Redirect to dashboard
+          notification.textContent = "Login successful! Redirecting to your dashboard...";
+          notification.className = "notification success";
+          notification.style.display = "block";
+          setTimeout(() => {
+            window.location.href = "{{ url_for('dashboard') }}";
+          }, 1000);
         } else {
-          alert(result.message);
+          notification.textContent = "Invalid Login. Please try again with the correct credentials.";
+          notification.className = "notification error";
+          notification.style.display = "block";
+          setTimeout(() => {
+            notification.style.display = "none";
+          }, 3000);
         }
       } catch (error) {
         console.error("Error:", error);
-        alert("An error occurred. Please try again.");
+        notification.textContent = "An error occurred. Please try again.";
+        notification.className = "notification error";
+        notification.style.display = "block";
+        setTimeout(() => {
+          notification.style.display = "none";
+        }, 3000);
       }
     });
   </script>
