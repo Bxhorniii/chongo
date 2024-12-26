@@ -234,10 +234,10 @@
           notification.className = "notification success";
           notification.style.display = "block";
           setTimeout(() => {
-            window.location.href = "{{ url_for('dashboard') }}";
+            window.location.href = result.redirect;
           }, 1000);
         } else {
-          notification.textContent = "Invalid Login. Please try again with the correct credentials.";
+          notification.textContent = result.message;
           notification.className = "notification error";
           notification.style.display = "block";
           setTimeout(() => {
