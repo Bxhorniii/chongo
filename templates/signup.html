@@ -131,6 +131,43 @@
       background: #333333;
     }
 
+    .show-password {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 14px;
+      color: #000;
+      margin-bottom: 15px;
+    }
+
+    .show-password input {
+      margin-right: 5px;
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: none;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .success {
+      background: #28a745;
+    }
+
+    .error {
+      background: #d65563;
+    }
+
     @media (max-width: 600px) {
       .login-container {
         width: 90%;
@@ -174,10 +211,16 @@
       <div class="form-input">
         <input type="password" name="confirm-password" id="confirm-password" placeholder="Confirm Password" required aria-label="Confirm Password">
       </div>
+      <div class="show-password">
+        <input type="checkbox" id="show-password">
+        <label for="show-password">Show Password</label>
+      </div>
       <button type="submit" class="login-button">Sign Up</button>
     </form>
     <p>Already have an account? <a href="{{ url_for('login_page') }}" style="color: #000000;">Login</a></p>
   </div>
+
+  <div id="notification" class="notification"></div>
 
   <script>
     document.getElementById("signup-form").addEventListener("submit", async function (event) {
@@ -189,7 +232,7 @@
       const confirmPassword = document.querySelector("input[name='confirm-password']").value.trim();
 
       if (password !== confirmPassword) {
-        alert("Passwords do not match!");
+        showNotification("Passwords do not match!", "error");
         return;
       }
 
@@ -202,16 +245,35 @@
 
         const result = await response.json();
         if (result.success) {
-          alert(result.message);
-          window.location.href = "{{ url_for('login_page') }}"; // Redirect to login page
+          showNotification(result.message, "success");
+          setTimeout(() => {
+            window.location.href = "{{ url_for('login_page') }}"; // Redirect to login page
+          }, 2000);
         } else {
-          alert(result.message);
+          showNotification(result.message, "error");
         }
       } catch (error) {
         console.error("Error:", error);
-        alert("An error occurred. Please try again.");
+        showNotification("An error occurred. Please try again.", "error");
       }
     });
+
+    document.getElementById("show-password").addEventListener("change", function () {
+      const passwordField = document.getElementById("password");
+      const confirmPasswordField = document.getElementById("confirm-password");
+      passwordField.type = this.checked ? "text" : "password";
+      confirmPasswordField.type = this.checked ? "text" : "password";
+    });
+
+    function showNotification(message, type) {
+      const notification = document.getElementById("notification");
+      notification.textContent = message;
+      notification.className = `notification ${type}`;
+      notification.style.display = "block";
+      setTimeout(() => {
+        notification.style.display = "none";
+      }, 3000);
+    }
   </script>
 </body>
 </html>
