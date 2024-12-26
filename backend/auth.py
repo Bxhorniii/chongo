@@ -2,20 +2,20 @@ import sqlite3
 import hashlib
 
 class User:
-    def __init__(self, name:str, username: str, password: str, is_hashed: bool = False):
+    def __init__(self, name: str, username: str, password: str, is_hashed: bool = False):
         self.name = name
         self.username = username
         self.password = password if is_hashed else self.hashed_password(password)
 
     def hashed_password(self, password: str):
         return hashlib.sha256(password.encode()).hexdigest()
-    
+
     def verify_password(self, input_password: str):
         return self.password == self.hashed_password(input_password)
 
 
 class Auth:
-    def __init__(self,db_name="users.db"):
+    def __init__(self, db_name="users.db"):
         self.db_name = db_name
         self.initialize_db()
 
@@ -23,7 +23,7 @@ class Auth:
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
 
-        #DB will include id, name, username and password
+        # DB will include id, name, username, and password
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
@@ -32,23 +32,25 @@ class Auth:
                 username TEXT UNIQUE NOT NULL,
                 password TEXT NOT NULL
             )
-        """
+            """
         )
         conn.commit()
         conn.close()
 
-    def register_user(self, name:str, username: str, password: str):
+    def register_user(self, name: str, username: str, password: str):
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
 
         try:
             user = User(name, username, password)
-            cur.execute("INSERT INTO users (name, username, password) VALUES (?, ?, ?)",
-                        (user.name, user.username, user.password))
+            cur.execute(
+                "INSERT INTO users (name, username, password) VALUES (?, ?, ?)",
+                (user.name, user.username, user.password),
+            )
             conn.commit()
-            return 'User registered successfully, Welcome Chango!'
+            return "User registered successfully, Welcome Chango!"
         except sqlite3.IntegrityError:
-            return 'Username already exists'
+            return "Username already exists"
         finally:
             conn.close()
 
@@ -61,24 +63,15 @@ class Auth:
 
         if result:
             user_id, stored_password = result
-            #hash the password to compare
             hashed_input = hashlib.sha256(password.encode()).hexdigest()
             if stored_password == hashed_input:
                 return user_id
         return "Invalid username or password"
 
-
-
-
-# #test
-# auth = Auth()
-
-# print(auth.register_user("Matthew", "Naibaho", "Chango123"))
-
-# #right and wrong password
-# print(auth.login_user("Naibaho", 'Chango123'))
-
-# print(auth.login_user("Naibaho", "Callatecabron"))
-
-# #trying to register with an already existing username(should fail)
-# print(auth.register_user("Bjorn", "Naibaho", "password"))
+    def get_user_name(self, username: str):
+        conn = sqlite3.connect(self.db_name)
+        cur = conn.cursor()
+        cur.execute("SELECT name FROM users WHERE username = ?", (username,))
+        result = cur.fetchone()
+        conn.close()
+        return result[0] if result else None
