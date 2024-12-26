@@ -58,11 +58,11 @@ def login_user():
     if not username or not password:
         return jsonify({"success": False, "message": "All fields are required."})
 
-    message = auth.login_user(username, password)
-    if "successful" in message:
+    result = auth.login_user(username, password)
+    if isinstance(result, int):  # Successful login returns a user ID
         session["username"] = username
-        return jsonify({"success": True, "message": message, "redirect": url_for("dashboard")})
-    return jsonify({"success": False, "message": message})
+        return jsonify({"success": True, "message": "Login successful", "redirect": url_for("dashboard")})
+    return jsonify({"success": False, "message": result})
 
 
 # Route to render the dashboard page
