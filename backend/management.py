@@ -124,25 +124,30 @@ class Money:
         rows = cur.fetchall()
         conn.close()
         return rows
+    
+    def fetch_months(self, month: int):
+        if not 1 <= month <= 12:
+            raise ValueError("Month should be from 1 to 12")
 
+        conn = sqlite3.connect(self.db_name)
+        cur = conn.cursor()
+        try:
+            month_str = f"{month:02d}"
 
+            cur.execute("""
+                SELECT * FROM expenses
+                WHERE user_id = ? AND strftime('%m', date) = ?;
+            """, (self.user_id, month_str))
 
+            rows = cur.fetchall()
+            return rows
+        except sqlite3.Error as e:
+            print(f"Error fetching expenses for the month {month}: {e}")
+            return []
 
-# money = Money(user_id=1)
+        finally:
+            conn.close()
 
-# # Add a custom category
-# money.add_custom_category("fitness")
-
-# print("Available categories:", money.fetch_categories())
-
-# # delete category
-# money.delete_category("fitness")
-
-# print("Available categories:", money.fetch_categories())
-
-# # Create a spending entry
-# spent = Spent(amount=100, category="food", money=money)
-# money.save_to_db(spent)
 
 # #fetch expenses
 # expenses = money.fetch_all_expenses()
