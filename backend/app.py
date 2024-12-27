@@ -12,7 +12,6 @@ app.secret_key = "your_secret_key_here"  # Add a secret key for sessions
 # Initialize Auth
 auth = Auth()
 
-
 # Route to render the index page
 @app.route("/")
 def index():
@@ -72,8 +71,27 @@ def dashboard():
     if not username:
         return redirect(url_for("login_page"))
 
+    # Mock user data
     user_name = auth.get_user_name(username)  # Assuming auth has a method to fetch the user's full name
-    return render_template("dashboard.html", user_name=user_name)
+    categories = {
+        "Rent": 800,
+        "Food": 300,
+        "Utilities": 200,
+        "Entertainment": 100
+    }
+    # Add the values for amount spent, income, and savings
+    amount_spent = sum(categories.values())  # Total spending
+    income = 2000  # Replace with actual data retrieval logic
+    savings = income - amount_spent  # Calculate savings
+
+    return render_template(
+        "dashboard.html",
+        user_name=user_name,
+        categories=categories,
+        amount_spent=amount_spent,
+        income=income,
+        savings=savings
+    )
 
 
 # Route to handle logout
