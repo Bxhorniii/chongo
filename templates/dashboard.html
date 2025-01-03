@@ -143,15 +143,17 @@
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
       color: #000000;
     }
+
     .section ul {
-      font-size: 18px; /* Adjust the size as needed */
-      color: #000; /* Optional: Change the text color */
+      font-size: 18px;
+      color: #000;
     }
 
     .section ul li {
-      font-size: 18px; /* Adjust the size for each list item */
-      margin-bottom: 5px; /* Optional: Add spacing between items */
+      font-size: 18px;
+      margin-bottom: 5px;
     }
+
     .transparent-section {
       background: none;
       box-shadow: none;
@@ -296,11 +298,13 @@
 
     <div class="section">
       <h2>Categories of Money Spent</h2>
-      <ul>
-        <li>Rent: 800$</li>
-        <li>Food: 300$</li>
-        <li>Utilities: 200$</li>
-        <li>Etnertainment: 100$</li>
+      <ul id="categories-list">
+        {% for category, amount in categories.items() %}
+        <li>
+          {{ category }}: ${{ amount }}
+          <button onclick="deleteCategory('{{ category }}')">Remove</button>
+        </li>
+        {% endfor %}
       </ul>
     </div>
 
@@ -310,6 +314,50 @@
         <canvas id="spendingChart"></canvas>
       </div>
     </div>
+
+    <div class="section">
+      <h2>Transactions</h2>
+      <ul id="transactions-list">
+        {% for transaction in transactions %}
+        <li>
+          Date: {{ transaction[2] }}, Amount: ${{ transaction[3] }}, Category: {{ transaction[4] }}
+          <button onclick="deleteTransaction({{ transaction[0] }})">Remove</button>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>Add Transaction</h2>
+      <form action="/add_transaction" method="POST">
+        <label for="amount">Amount:</label>
+        <input type="number" id="amount" name="amount" step="0.01" required>
+
+        <label for="category">Category:</label>
+        <select id="category" name="category" required></select>
+
+        <button type="submit">Add Transaction</button>
+      </form>
+    </div>
+
+    <div class="section">
+      <h2>Add New Category</h2>
+      <form id="add-category-form">
+        <label for="category_name">Category Name:</label>
+        <input type="text" id="category_name" name="category_name" required>
+        <button type="button" id="add-category-btn">Add Category</button>
+      </form>
+      <p id="category-message"></p>
+    </div>
+
+    <div class="section">
+      <h2>Update Income</h2>
+      <form action="/update_income" method="POST">
+        <label for="income">Income:</label>
+        <input type="number" id="income" name="income" step="0.01" required>
+        <button type="submit">Update Income</button>
+      </form>
+    </div>
   </div>
 
   <script>
@@ -317,6 +365,78 @@
       const menu = document.getElementById('menu');
       menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
     }
+
+    function fetchCategories() {
+      fetch('/get_categories')
+        .then(response => response.json())
+        .then(data => {
+          const categorySelect = document.getElementById('category');
+          categorySelect.innerHTML = '';
+          data.categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error fetching categories:', error));
+    }
+
+    function deleteCategory(category) {
+      fetch('/delete_category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `category_name=${encodeURIComponent(category)}`
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            fetchCategories();
+          } else {
+            alert('Error deleting category');
+          }
+        })
+        .catch(error => console.error('Error deleting category:', error));
+    }
+
+    function deleteTransaction(transactionId) {
+      fetch('/delete_transaction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `transaction_id=${encodeURIComponent(transactionId)}`
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const transactionList = document.getElementById('transactions-list');
+            const transactionItem = Array.from(transactionList.children).find(
+              li => li.textContent.includes(transactionId)
+            );
+            if (transactionItem) transactionList.removeChild(transactionItem);
+          } else {
+            alert('Error deleting transaction');
+          }
+        })
+        .catch(error => console.error('Error deleting transaction:', error));
+    }
+
+    document.getElementById('add-category-btn').addEventListener('click', () => {
+      const categoryName = document.getElementById('category_name').value;
+      fetch('/add_category', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `category_name=${encodeURIComponent(categoryName)}`
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            fetchCategories();
+          }
+        })
+        .catch(error => console.error('Error adding category:', error));
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchCategories);
 
     const spendingData = {
       labels: Object.keys({{ categories | tojson }}),
@@ -332,12 +452,9 @@
       options: {
         responsive: true,
         plugins: {
-          legend: {
-            display: true,
-            position: 'bottom',
-          },
-        },
-      },
+          legend: { display: true, position: 'bottom' }
+        }
+      }
     };
 
     const spendingChart = new Chart(document.getElementById('spendingChart'), spendingConfig);
