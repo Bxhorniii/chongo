@@ -1,6 +1,7 @@
 import sqlite3
 import hashlib
 
+
 class User:
     def __init__(self, name: str, username: str, password: str, is_hashed: bool = False):
         self.name = name
@@ -22,8 +23,6 @@ class Auth:
     def initialize_db(self):
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
-
-        # DB will include id, name, username, and password
         cur.execute(
             """
             CREATE TABLE IF NOT EXISTS users (
@@ -40,7 +39,6 @@ class Auth:
     def register_user(self, name: str, username: str, password: str):
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
-
         try:
             user = User(name, username, password)
             cur.execute(
