@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chango Finance - Transactions</title>
+    <style>
+        body {
+            margin: 0;
+            padding-top: 60px;
+            font-family: 'Literata', serif;
+            background-color: black;
+            color: white;
+            min-height: 100vh;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+        .video-background video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+        }
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 10;
+            box-sizing: border-box;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+        .header img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .header h1 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            font-family: 'Inter', sans-serif;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        .card {
+            background: rgb(255, 255, 255);
+            border-radius: 15px;
+            padding: 20px;
+            color: black;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card h2 {
+            margin-top: 0;
+            text-align: center;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgb(255, 255, 255);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .transaction-table th,
+        .transaction-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .transaction-table th {
+            background-color: rgb(245, 245, 245);
+            font-weight: bold;
+            color: #333;
+        }
+        .transaction-table tr:hover {
+            background-color: rgb(249, 249, 249);
+        }
+        .delete-btn {
+            background-color: #ff4444;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: auto;
+            font-size: 14px;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        .success-message {
+            color: #4CAF50;
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgb(232, 245, 233);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .error-message {
+            color: #ff4444;
+            text-align: center;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgb(255, 235, 238);
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            .card {
+                min-width: 100%;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+            .header img {
+                height: 30px;
+            }
+        }
+        .transaction-table-container {
+            max-height: 300px; /* Height for about 5 rows */
+            overflow-y: auto;
+            margin-top: 20px;
+            border-radius: 62px; /* Match dashboard style */
+            background: white;
+            position: relative;
+            padding: 0 20px;
+        }
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            position: relative;
+        }
+        /* Sticky header */
+        .transaction-table thead {
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+        .transaction-table th {
+            padding: 15px;
+            text-align: left;
+            color: #333;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .transaction-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        /* Fade effect at the bottom like dashboard */
+        .transaction-table-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, white);
+            pointer-events: none;
+            border-bottom-left-radius: 62px;
+            border-bottom-right-radius: 62px;
+        }
+        /* Custom scrollbar styling to match dashboard */
+        .transaction-table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .transaction-table-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .transaction-table-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+        .transaction-table-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Style for the delete button */
+        .delete-btn {
+            background-color: #ff4444;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
+        /* Hover effect for rows */
+        .transaction-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .success-message, .error-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+        .success-message {
+            background-color: rgb(232, 245, 233);
+            color: #4CAF50;
+        }
+        .error-message {
+            background-color: rgb(255, 235, 238);
+            color: #ff4444;
+        }
+        /* Update hamburger menu styles */
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 12px;
+        }
+        .hamburger-menu div {
+            width: 30px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        /* Add hover effect for hamburger menu */
+        .hamburger-menu:hover div {
+            background: #ff4444; /* Red color on hover */
+        }
+        /* Update menu styles with solid colors */
+        .menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background: rgb(0, 0, 0); /* Solid black instead of transparent */
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            width: 250px;
+            text-align: left;
+        }
+        .menu a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            margin: 12px 0;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+        .menu a:hover {
+            background-color: rgb(50, 50, 50); /* Solid color instead of transparent */
+        }
+        /* Style for logout button */
+        .menu a.logout {
+            color: #ff4444;
+            border-top: 1px solid rgb(50, 50, 50); /* Solid color */
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+        .menu a.logout:hover {
+            background-color: rgb(70, 20, 20); /* Darker red background on hover */
+        }
+        .header-left a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+            transition: opacity 0.3s ease;
+        }
+        .header-left a:hover {
+            opacity: 0.8;
+        }
+        .header-left img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        .header-left h1 {
+            font-size: 22px;
+            margin: 0;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: normal;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+        .modal-content h3 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 24px;
+        }
+        .modal-content p {
+            margin: 0 0 20px 0;
+            color: #666;
+            font-size: 16px;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .confirm-btn, .cancel-btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+        .confirm-btn {
+            background-color: #ff4444;
+            color: white;
+        }
+        .confirm-btn:hover {
+            background-color: #cc0000;
+            transform: translateY(-2px);
+        }
+        .cancel-btn {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .cancel-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="header">
+        <div class="header-left">
+            <a href="/" style="display: flex; align-items: center; text-decoration: none;">
+                <img src="{{ url_for('static', filename='chango.png') }}" alt="Chango Logo">
+                <h1>Chango Finance</h1>
+            </a>
+        </div>
+        <div class="hamburger-menu" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="menu" id="menu">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/transaction">Transactions</a>
+            <a href="#" class="logout" onclick="logout()">Logout</a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Add Budget Card -->
+        <div class="card">
+            <h2>Add Budget</h2>
+            <form id="budget-form">
+                <div class="form-group">
+                    <label for="budget">Budget ($)</label>
+                    <input type="number" id="budget" name="income" step="0.01" min="0" required>
+                </div>
+                <button type="submit">Update Budget</button>
+                <div id="budget-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- Add Transaction Card -->
+        <div class="card">
+            <h2>Add Transaction</h2>
+            <form id="transaction-form">
+                <div class="form-group">
+                    <label for="amount">Amount ($)</label>
+                    <input type="number" id="amount" name="amount" step="0.01" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                    </select>
+                </div>
+                <button type="submit">Add Transaction</button>
+                <div id="transaction-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- Add Category Card -->
+        <div class="card">
+            <h2>Add Category</h2>
+            <form id="category-form">
+                <div class="form-group">
+                    <label for="category-name">Category Name</label>
+                    <input type="text" id="category-name" name="category-name" required>
+                </div>
+                <button type="submit">Add Category</button>
+                <div id="category-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- Transaction History Card -->
+        <div class="card" style="flex: 100%;">
+            <h2>Transaction History</h2>
+            <div class="transaction-table-container">
+                <table class="transaction-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transaction-list">
+                        <!-- Transactions will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add this HTML at the bottom of the body -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <h3>Delete Transaction</h3>
+            <p>Are you sure you want to delete this transaction?</p>
+            <div class="modal-buttons">
+                <button id="confirm-delete" class="confirm-btn">Delete</button>
+                <button id="cancel-delete" class="cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Check user authentication
+        async function checkAuth() {
+            try {
+                const response = await fetch('/check_auth');
+                if (!response.ok) {
+                    window.location.href = '/login';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                window.location.href = '/login';
+                return false;
+            }
+        }
+
+        // Fetch categories for the dropdown
+        async function fetchCategories() {
+            try {
+                const response = await fetch('/categories');
+                const data = await response.json();
+                
+                const categorySelect = document.getElementById('category');
+                categorySelect.innerHTML = '<option value="">Select a category</option>';
+                
+                data.categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category.name;  // Use category name as value
+                    option.textContent = category.name;
+                    categorySelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        }
+
+        // Fetch and display transactions
+        async function fetchTransactions() {
+            try {
+                const response = await fetch('/transactions');
+                if (!response.ok) throw new Error('Failed to fetch transactions');
+
+                const data = await response.json();
+                const transactionList = document.getElementById('transaction-list');
+                transactionList.innerHTML = '';
+
+                data.transactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(transaction.date).toLocaleDateString()}</td>
+                        <td>${transaction.category}</td>
+                        <td>$${transaction.amount.toFixed(2)}</td>
+                        <td>
+                            <button class="delete-btn" onclick="deleteTransaction(${transaction.id})">
+                                Delete
+                            </button>
+                        </td>
+                    `;
+                    transactionList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching transactions:', error);
+                showMessage('transaction-message', 'Error loading transactions', false);
+            }
+        }
+
+        // Helper function to display success/error messages
+        function showMessage(elementId, message, isSuccess) {
+            const messageElement = document.getElementById(elementId);
+            messageElement.textContent = message;
+            messageElement.style.backgroundColor = isSuccess ? '#d4edda' : '#f8d7da';
+            messageElement.style.color = isSuccess ? '#155724' : '#721c24';
+            messageElement.style.padding = '10px';
+            messageElement.style.borderRadius = '4px';
+            messageElement.style.marginTop = '10px';
+            messageElement.style.display = 'block';
+            
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Handle budget submission
+        document.getElementById('budget-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);  // route expects form data
+
+            try {
+                const response = await fetch('/update_income', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showMessage('budget-message', 'Budget updated successfully!', true);
+                    this.reset();
+                } else {
+                    showMessage('budget-message', data.error || 'Error updating budget', false);
+                }
+            } catch (error) {
+                console.error('Error updating budget:', error);
+                showMessage('budget-message', 'Error updating budget', false);
+            }
+        });
+
+        // Handle new transaction submission
+        document.getElementById('transaction-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const amountInput = document.getElementById('amount');
+            const categorySelect = document.getElementById('category');
+            
+            const amount = amountInput.value;
+            const category = categorySelect.value;
+
+            // Clear previous error messages
+            const messageElement = document.getElementById('transaction-message');
+            messageElement.style.display = 'none';
+
+            // Validate inputs
+            if (!amount || !category) {
+                showMessage('transaction-message', 'Please fill in all fields', false);
+                return;
+            }
+
+            try {
+                const response = await fetch('/add_transaction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        amount: parseFloat(amount),
+                        category_name: category
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('transaction-message', 'Transaction added successfully!', true);
+                    amountInput.value = '';
+                    categorySelect.value = '';
+                    await fetchTransactions();
+                } else {
+                    showMessage('transaction-message', data.error || 'Error adding transaction', false);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showMessage('transaction-message', 'Error adding transaction', false);
+            }
+        });
+
+        // Handle new category submission
+        document.getElementById('category-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const categoryName = document.getElementById('category-name').value;
+
+            try {
+                const response = await fetch('/add_category', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: categoryName })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showMessage('category-message', 'Category added successfully!', true);
+                    this.reset();
+                    await fetchCategories();
+                } else {
+                    showMessage('category-message', data.error || 'Error adding category', false);
+                }
+            } catch (error) {
+                console.error('Error adding category:', error);
+                showMessage('category-message', 'Error adding category', false);
+            }
+        });
+
+        // Handle transaction deletion
+        async function deleteTransaction(id) {
+            const modal = document.getElementById('delete-modal');
+            const confirmBtn = document.getElementById('confirm-delete');
+            const cancelBtn = document.getElementById('cancel-delete');
+
+            modal.style.display = 'block';
+
+            // Handle delete confirmation
+            confirmBtn.onclick = async () => {
+                try {
+                    const response = await fetch(`/delete_transaction/${id}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        showMessage('transaction-message', 'Transaction deleted successfully!', true);
+                        await fetchTransactions();
+                    } else {
+                        showMessage('transaction-message', 'Error deleting transaction', false);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showMessage('transaction-message', 'Error deleting transaction', false);
+                }
+                modal.style.display = 'none';
+            };
+
+            // Handle cancel
+            cancelBtn.onclick = () => {
+                modal.style.display = 'none';
+            };
+
+            // Close modal when clicking outside
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        }
+
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (await checkAuth()) {
+                // fetch categories and transactions
+                await Promise.all([fetchCategories(), fetchTransactions()]);
+            }
+        });
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function logout() {
+            window.location.href = '/logout';
+        }
+    </script>
+</body>
+</html>
