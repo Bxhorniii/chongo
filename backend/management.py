@@ -1,7 +1,6 @@
 import sqlite3
 from datetime import datetime
 
-
 class Spent:
     def __init__(self, amount: float, category: str, money):
         if amount <= 0:
@@ -9,7 +8,8 @@ class Spent:
         self.amount = amount
         self.date = datetime.now().strftime('%Y-%m-%d')
 
-        categories = money.fetch_categories()
+        # Verify the category exists
+        categories = [cat[1] for cat in money.fetch_categories()]  # cat = (id, name)
         if category not in categories:
             raise ValueError(f"Invalid category: {category}")
         self.category = category
@@ -72,14 +72,24 @@ class Money:
 
     def initialize_preexisting_categories(self):
         preexisting_categories = [
-            "food", "housing", "transportation", "utilities", "insurance",
-            "healthcare", "saving", "investment", "recreation"
+            "Food", "Rent", "Transportation", "Utilities", "Insurance",
+            "Healthcare", "Saving", "Investment", "Recreation"
         ]
-
+        
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
+        
+        # Delete lowercase categories
+        lowercase_categories = [cat.lower() for cat in preexisting_categories]
+        cur.execute("DELETE FROM categories WHERE LOWER(name) IN ({}) AND name != ?".format(
+            ','.join(['?'] * len(lowercase_categories))), 
+            lowercase_categories + [preexisting_categories[0]]
+        )
+        
+        # Insert or update the proper capitalized categories
         for category in preexisting_categories:
             cur.execute("INSERT OR IGNORE INTO categories (user_id, name) VALUES (NULL, ?)", (category,))
+        
         conn.commit()
         conn.close()
 
@@ -130,18 +140,19 @@ class Money:
             conn.close()
 
     def delete_category(self, category_name: str):
+        """Delete any category."""
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
-
         try:
             cur.execute(
-                "DELETE FROM categories WHERE user_id = ? AND name = ?",
-                (self.user_id, category_name,)
+                "DELETE FROM categories WHERE name = ?",
+                (category_name,)
             )
             conn.commit()
-            print(f"Category '{category_name}' was deleted.")
+            return True
         except sqlite3.Error as e:
             print(f"ERROR deleting: {e}")
+            raise
         finally:
             conn.close()
 
@@ -149,7 +160,6 @@ class Money:
         """Delete a transaction by its ID."""
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
-
         try:
             cur.execute(
                 "DELETE FROM expenses WHERE id = ? AND user_id = ?",
@@ -163,20 +173,48 @@ class Money:
             conn.close()
 
     def fetch_categories(self):
+        """Returns a list of (id, name) for all categories that are preexisting or belong to the user."""
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
         cur.execute(
             """
-            SELECT name FROM categories 
+            SELECT id, name 
+            FROM categories 
             WHERE user_id IS NULL OR user_id = ?
             """,
             (self.user_id,)
         )
         rows = cur.fetchall()
         conn.close()
-        return [row[0] for row in rows]
+        return rows  # e.g. [(1, 'food'), (2, 'housing'), ...]
+
+    ###########################################################################
+    # NEW METHOD: get_category_name() looks up the category's name by its ID. #
+    ###########################################################################
+    def get_category_name(self, category_id: int) -> str:
+        """Given a category ID, return its name, or raise a ValueError if not found."""
+        conn = sqlite3.connect(self.db_name)
+        cur = conn.cursor()
+        try:
+            cur.execute(
+                """
+                SELECT name
+                FROM categories
+                WHERE id = ? AND (user_id IS NULL OR user_id = ?)
+                """,
+                (category_id, self.user_id)
+            )
+            row = cur.fetchone()
+            
+            if row:
+                return row[0]
+            else:
+                raise ValueError(f"No category found with ID {category_id}")
+        finally:
+            conn.close()
 
     def save_to_db(self, spent: Spent):
+        """Inserts a new expense record."""
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
         cur.execute(
@@ -187,6 +225,7 @@ class Money:
         conn.close()
 
     def fetch_all_expenses(self):
+        """Returns all expenses for the user, ordered by date DESC."""
         conn = sqlite3.connect(self.db_name)
         cur = conn.cursor()
         cur.execute(
@@ -198,6 +237,7 @@ class Money:
         return rows
 
     def fetch_months(self, month: int):
+        """Returns expenses for the given month (1-12)."""
         if not 1 <= month <= 12:
             raise ValueError("Month should be from 1 to 12.")
 
@@ -205,7 +245,6 @@ class Money:
         cur = conn.cursor()
         try:
             month_str = f"{month:02d}"
-
             cur.execute(
                 """
                 SELECT * FROM expenses
@@ -213,9 +252,10 @@ class Money:
                 """,
                 (self.user_id, month_str)
             )
-
             rows = cur.fetchall()
             return rows
         except sqlite3.Error as e:
             print(f"Error fetching expenses for the month {month}: {e}")
             return []
+        finally:
+            conn.close()
