@@ -170,8 +170,6 @@
         .profile-container {
             width: 280px;
             height: 550px;
-            right: 197px;
-            top: 20%;
             position: absolute;
             background: rgba(255, 255, 255, 0.28);
             border-radius: 109px;
@@ -179,22 +177,40 @@
             animation: slideInFromRight 1000ms ease-out 1000ms forwards;
         }
 
+        .profile-container.first {
+            right: 97px;
+            top: 20%;
+        }
+
+        .profile-container.second {
+            right: 427px;
+            top: 20%;
+        }
+
         .profile-image {
             width: 255px;
             height: 525px;
-            right: 210px;
-            top: 21%;
             position: absolute;
             object-fit: cover;
             opacity: 0;
             animation: slideInFromRight 1000ms ease-out 1000ms forwards;
         }
 
+        .profile-image.first {
+            right: 110px;
+            top: 21%;
+        }
+
+        .profile-image.second {
+            width: 204px;
+            height: 550px;
+            right: 470px;
+            top: 21%;
+        }
+
         .co-founder-badge {
             width: 238px;
             height: 78px;
-            right: 218px;
-            bottom: 5%;
             position: absolute;
             background: #FFFAFA;
             border-radius: 41px;
@@ -203,6 +219,16 @@
             justify-content: center;
             opacity: 0;
             animation: slideInFromRight 1000ms ease-out 1000ms forwards;
+        }
+
+        .co-founder-badge.first {
+            right: 118px;
+            bottom: 5%;
+        }
+
+        .co-founder-badge.second {
+            right: 448px;
+            bottom: 5%;
         }
 
         .co-founder-text {
@@ -335,9 +361,15 @@
         <a href="/signup" class="action-button get-started">Get Started</a>
         <a href="#" class="action-button learn-more">Learn more</a>
         
-        <div class="profile-container"></div>
-        <img class="profile-image" src="static/jozef.png" alt="Co-Founder">
-        <div class="co-founder-badge">
+        <div class="profile-container first"></div>
+        <img class="profile-image first" src="static/jozef.png" alt="Co-Founder">
+        <div class="co-founder-badge first">
+            <div class="co-founder-text">Co-Founder</div>
+        </div>
+
+        <div class="profile-container second"></div>
+        <img class="profile-image second" src="static/bjorn.png" alt="Co-Founder">
+        <div class="co-founder-badge second">
             <div class="co-founder-text">Co-Founder</div>
         </div>
     </div>
