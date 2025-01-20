@@ -1,186 +1,361 @@
-  <!DOCTYPE html>
-  <html lang="en">
-  <head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chango Finance - Home</title>
+    <title>Chango Finance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Madimi+One&display=swap" rel="stylesheet">
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        width: 100vw;
-        overflow: hidden;
-        position: relative;
-      }
-
-      /* Video background */
-      .video-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: -2;
-        overflow: hidden;
-      }
-
-      .video-background video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: grayscale(100%);
-      }
-
-      body::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: -1;
-      }
-
-      .header {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: white;
-        width: 95%;
-        z-index: 2;
-      }
-
-      .header img {
-        height: 40px;
-        margin-right: 10px;
-      }
-
-      .header h1 {
-        font-size: 24px;
-        margin: 0;
-        flex-grow: 1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .nav-buttons {
-        display: flex;
-        gap: 10px;
-      }
-
-      .nav-buttons a {
-        text-decoration: none;
-        padding: 10px 15px;
-        font-size: 14px;
-        font-weight: bold;
-        color: white;
-        background: #000000;
-        border-radius: 4px;
-        transition: background 0.3s ease;
-      }
-
-      .nav-buttons a:hover {
-        background: #333333;
-      }
-
-      .content-container {
-        position: relative;
-        text-align: center;
-        color: white;
-        z-index: 1;
-        padding: 20px;
-        max-width: 600px;
-        margin: 0 auto;
-      }
-
-      .content-container h1 {
-        font-size: 36px;
-        margin-bottom: 20px;
-      }
-
-      .content-container p {
-        font-size: 18px;
-        line-height: 1.6;
-      }
-
-      .content-container .cta-button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        font-size: 16px;
-        color: black;
-        background: white;
-        text-decoration: none;
-        border-radius: 4px;
-        transition: background 0.3s ease, color 0.3s ease;
-      }
-
-      .content-container .cta-button:hover {
-        background: #f0f0f0;
-        color: black;
-      }
-
-      @media (max-width: 600px) {
-        .header h1 {
-          font-size: 18px;
-          max-width: 60%;
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
         }
 
-        .content-container h1 {
-          font-size: 28px;
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background: white;
+            overflow: hidden;
         }
 
-        .nav-buttons a {
-          font-size: 12px;
-          padding: 8px 10px;
+        .background {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+            background-image: url('static/background.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 1;
+            animation: none;
         }
-      }
+
+        .overlay {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+            opacity: 0.20;
+            background: black;
+            animation: none;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            left: 97px;
+            top: 20px;
+            position: absolute;
+            opacity: 0;
+            animation: slideInFromLeft 1000ms ease-out 1000ms forwards;
+        }
+
+        .brand-name {
+            width: 220px;
+            height: 40px;
+            left: 155px;
+            top: 25px;
+            position: absolute;
+            text-align: center;
+            color: white;
+            font-size: 30px;
+            font-family: 'Madimi One', sans-serif;
+            opacity: 0;
+            animation: slideInFromLeft 1000ms ease-out 1000ms forwards;
+        }
+
+        .nav-button {
+            width: 110px;
+            height: 40px;
+            position: absolute;
+            background: black;
+            border-radius: 62px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            opacity: 0;
+            animation: slideInFromRight 1000ms ease-out 1000ms forwards;
+            text-align: center;
+        }
+
+        .login-btn {
+            right: 280px;
+            top: 25px;
+        }
+
+        .signup-btn {
+            right: 140px;
+            top: 25px;
+        }
+
+        .description {
+            width: 660px;
+            height: auto;
+            left: 97px;
+            top: 55%;
+            position: absolute;
+            color: white;
+            font-size: 28px;
+            font-family: 'Madimi One', sans-serif;
+            opacity: 0;
+            animation: slideInFromLeft 1000ms ease-out 1000ms forwards;
+        }
+
+        .main-heading {
+            width: 855px;
+            height: auto;
+            left: 97px;
+            top: 30%;
+            position: absolute;
+            font-family: 'Madimi One', sans-serif;
+            font-size: 70px;
+            line-height: 1.1;
+            opacity: 0;
+            animation: slideInFromLeft 1000ms ease-out 1000ms forwards;
+        }
+
+        .track-text {
+            color: #4DFF00;
+        }
+
+        .white-text {
+            color: white;
+        }
+
+        .black-text {
+            color: black;
+        }
+
+        .action-button {
+            width: 200px;
+            height: 80px;
+            position: absolute;
+            border-radius: 62px;
+            cursor: pointer;
+            font-family: 'Madimi One', sans-serif;
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            opacity: 0;
+            animation: slideInFromRight 1000ms ease-out 1000ms forwards;
+        }
+
+        .get-started {
+            left: 97px;
+            top: 75%;
+            background: white;
+            color: black;
+        }
+
+        .learn-more {
+            left: 347px;
+            top: 75%;
+            background: black;
+            color: white;
+        }
+
+        .profile-container {
+            width: 280px;
+            height: 550px;
+            right: 197px;
+            top: 20%;
+            position: absolute;
+            background: rgba(255, 255, 255, 0.28);
+            border-radius: 109px;
+            opacity: 0;
+            animation: slideInFromRight 1000ms ease-out 1000ms forwards;
+        }
+
+        .profile-image {
+            width: 255px;
+            height: 525px;
+            right: 210px;
+            top: 21%;
+            position: absolute;
+            object-fit: cover;
+            opacity: 0;
+            animation: slideInFromRight 1000ms ease-out 1000ms forwards;
+        }
+
+        .co-founder-badge {
+            width: 238px;
+            height: 78px;
+            right: 218px;
+            bottom: 5%;
+            position: absolute;
+            background: #FFFAFA;
+            border-radius: 41px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            animation: slideInFromRight 1000ms ease-out 1000ms forwards;
+        }
+
+        .co-founder-text {
+            position: static;
+            color: black;
+            font-size: 32px;
+            font-family: 'Madimi One', sans-serif;
+            margin: 0;
+            padding: 0;
+            width: auto;
+            height: auto;
+        }
+
+        @media screen and (max-width: 1440px) {
+            .logo {
+                left: 5%;
+            }
+            
+            .brand-name {
+                left: 10%;
+            }
+            
+            .login-btn {
+                right: 280px;
+            }
+            
+            .signup-btn {
+                right: 140px;
+            }
+            
+            .description {
+                left: 5%;
+                width: 45%;
+            }
+            
+            .main-heading {
+                left: 5%;
+                width: 60%;
+            }
+            
+            .get-started {
+                left: 5%;
+            }
+            
+            .learn-more {
+                left: calc(5% + 300px);
+            }
+            
+            .profile-container,
+            .profile-image,
+            .co-founder-badge,
+            .co-founder-text {
+                right: 15%;
+                left: auto;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .main-heading {
+                font-size: 60px;
+                width: 90%;
+            }
+            
+            .description {
+                width: 90%;
+                font-size: 24px;
+            }
+            
+            .profile-container,
+            .profile-image,
+            .co-founder-badge,
+            .co-founder-text {
+                display: none;
+            }
+            
+            .action-button {
+                width: 200px;
+                height: 80px;
+                font-size: 24px;
+            }
+            
+            .learn-more {
+                left: 5%;
+                top: 780px;
+            }
+        }
+
+        @keyframes slideInFromLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInFromRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
     </style>
-  </head>
-  <body>
-    <!-- Video background -->
-    <div class="video-background">
-      <video autoplay muted loop playsinline>
-        <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
+</head>
+<body>
+    <div class="container">
+        <div class="background"></div>
+        <div class="overlay"></div>
+        <img class="logo" src="static/chango.png" alt="Chango Finance Logo">
+        <div class="brand-name">Chango Finance</div>
+        
+        <a href="/login" class="nav-button login-btn">Login</a>
+        <a href="/signup" class="nav-button signup-btn">Sign up</a>
+        
+        <div class="description">Chango Finance helps you log every transaction, set budgets, and categorize expenses.</div>
+        
+        <div class="main-heading">
+            <span class="track-text">Track</span>
+            <span class="white-text">All Your</span><br>
+            <span class="black-text">Spending</span>
+            <span class="white-text">in One Place</span>
+        </div>
+        
+        <a href="/signup" class="action-button get-started">Get Started</a>
+        <a href="#" class="action-button learn-more">Learn more</a>
+        
+        <div class="profile-container"></div>
+        <img class="profile-image" src="static/jozef.png" alt="Co-Founder">
+        <div class="co-founder-badge">
+            <div class="co-founder-text">Co-Founder</div>
+        </div>
     </div>
 
-    <!-- Header -->
-    <header class="header">
-      <img src="{{ url_for('static', filename='chango.png') }}" alt="Chango Logo">
-      <h1>Chango Finance</h1>
-      <div class="nav-buttons">
-        <a href="{{ url_for('login_page') }}">Login</a>
-        <a href="{{ url_for('signup_page') }}">Sign Up</a>
-      </div>
-    </header>
-
-    <!-- Content -->
-    <div class="content-container">
-      <h1>Welcome to Chango Finance</h1>
-      <p>
-        Chango Finance is your personal financial wallet, designed to help you
-        keep track of your spendings and stay on top of your budget. With
-        Chango, you can easily log all your transactions, categorize your
-        expenses, and view detailed insights into your monthly spending habits.
-      </p>
-      <p>
-        Our goal is to make financial management simple, efficient, and
-        accessible for everyone. Whether you're saving for a big purchase or
-        just trying to get a handle on your daily expenses, Chango Finance is
-        here to support you every step of the way.
-      </p>
-      <a href="{{ url_for('signup_page') }}" class="cta-button">Get Started</a>
-    </div>
-  </body>
-  </html>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.action-button, .nav-button');
+            
+            buttons.forEach(button => {
+                button.addEventListener('mouseover', function() {
+                    this.style.opacity = '0.8';
+                });
+                
+                button.addEventListener('mouseout', function() {
+                    this.style.opacity = '1';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
