@@ -8,29 +8,14 @@
   <style>
     body {
       margin: 0;
-      padding-top: 60px;
+      padding-top: 40px;
       font-family: 'Literata', serif;
-      background-color: black;
+      background: url("{{ url_for('static', filename='background.jpg') }}") no-repeat center center fixed;
+      background-size: cover;
       color: white;
       min-height: 100vh;
       overflow-x: hidden;
-    }
-
-    .video-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      overflow: hidden;
-    }
-
-    .video-background video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: grayscale(100%);
+      position: relative;  
     }
 
     body::after {
@@ -40,8 +25,9 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.7);
       z-index: -1;
+      -webkit-backdrop-filter: blur(8px) brightness(0.7);
+      backdrop-filter: blur(8px) brightness(0.7);
     }
 
     .header {
@@ -52,8 +38,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 20px;
-      background: rgba(0, 0, 0, 1);
+      padding: 15px 20px;
+      background: transparent;
       z-index: 10;
       box-sizing: border-box;
     }
@@ -64,12 +50,12 @@
     }
 
     .header img {
-      height: 40px;
-      margin-right: 10px;
+      height: 50px;
+      margin-right: 15px;
     }
 
     .header h1 {
-      font-size: 22px;
+      font-size: 36px;
       margin: 0;
       color: white;
       font-family: 'Inter', sans-serif;
@@ -86,7 +72,7 @@
       cursor: pointer;
       position: absolute;
       right: 20px;
-      top: 12px;
+      top: 20px;
     }
 
     .hamburger-menu div {
@@ -154,7 +140,7 @@
       color: #FFF;
       font-size: 42px;
       font-weight: 700;
-      margin: 0px 0 40px 0; /* Adjusted margin to push below the header */
+      margin: -10px 0 40px 0;
     }
 
     .dashboard {
@@ -353,7 +339,7 @@
 
       .welcome-message {
         font-size: 32px;
-        margin: 80px 0 30px 0; /* Adjusted for smaller screens */
+        margin: -5px 0 30px 0;
       }
 
       .tab-heading {
@@ -380,30 +366,6 @@
       }
     }
 
-    .section {
-      background: rgb(255, 255, 255);
-      margin-bottom: 20px;
-      padding: 20px;
-      border-radius: 62px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-      color: #000000;
-    }
-
-    .flex-item {
-      background: rgb(255, 255, 255);
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 25px;
-      border-radius: 12px;
-      transition: transform 0.3s;
-    }
-
-    .chart-container {
-      background: rgb(255, 255, 255);
-      padding: 25px;
-      border-radius: 62px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    }
-
     .header-left a {
       display: flex;
       align-items: center;
@@ -417,12 +379,12 @@
     }
 
     .header-left img {
-      height: 40px;
-      margin-right: 10px;
+      height: 50px;
+      margin-right: 15px;
     }
 
     .header-left h1 {
-      font-size: 22px;
+      font-size: 36px;
       margin: 0;
       color: white;
       font-family: 'Inter', sans-serif;
@@ -431,12 +393,6 @@
   </style>
 </head>
 <body>
-  <div class="video-background">
-    <video autoplay muted loop playsinline>
-      <source src="{{ url_for('static', filename='background-video.mp4') }}" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-  </div>
   <header class="header">
     <div class="header-left">
       <a href="/" style="display: flex; align-items: center; text-decoration: none;">
@@ -503,26 +459,10 @@
         datasets: [{
           data: Object.values({{ categories | tojson }}),
           backgroundColor: [
-            '#FF6384', // Pink
-            '#36A2EB', // Blue
-            '#FFCE56', // Yellow
-            '#4BC0C0', // Teal
-            '#9966FF', // Purple
-            '#FF9F40', // Orange
-            '#32CD32', // Lime Green
-            '#FF69B4', // Hot Pink
-            '#4169E1', // Royal Blue
-            '#FFD700', // Gold
-            '#8B4513', // Saddle Brown
-            '#48D1CC', // Turquoise
-            '#FF4500', // Orange Red
-            '#9370DB', // Medium Purple
-            '#20B2AA', // Light Sea Green
-            '#DDA0DD', // Plum
-            '#F08080', // Light Coral
-            '#00CED1', // Dark Turquoise
-            '#FF1493', // Deep Pink
-            '#00FA9A'  // Medium Spring Green
+            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+            '#FF9F40', '#32CD32', '#FF69B4', '#4169E1', '#FFD700',
+            '#8B4513', '#48D1CC', '#FF4500', '#9370DB', '#20B2AA',
+            '#DDA0DD', '#F08080', '#00CED1', '#FF1493', '#00FA9A'
           ],
           borderWidth: 0
         }]
